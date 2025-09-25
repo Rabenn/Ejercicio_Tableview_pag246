@@ -1,0 +1,10 @@
+/* estilos.css */
+
+/* Estilo general de la raíz (root pane) */
+.root {
+    -fx-background-color: #f5f5f5; /* fondo gris claro */
+    -fx-padding: 15;
+    -fx-border-color: blue;        /* borde azul */
+    -fx-border-width: 3;
+    -fx-border-radius: 5;
+}

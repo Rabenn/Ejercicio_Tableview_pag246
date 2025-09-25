@@ -82,7 +82,7 @@
                     <execution>
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>es.ruben.modelos.App</mainClass>
+                            <mainClass>es.ruben.App</mainClass>
                         </configuration>
                     </execution>
                 </executions>

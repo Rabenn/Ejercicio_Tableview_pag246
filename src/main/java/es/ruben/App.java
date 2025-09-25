@@ -1,4 +1,4 @@
-package es.ruben.modelos;
+package es.ruben;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -20,7 +20,6 @@ public class App extends Application {
         logger.info("App lanzada");
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/table_app_info.fxml"));
-
         Scene scene = new Scene(loader.load());
         stage.setTitle("Ejercicio de tabla");
 
