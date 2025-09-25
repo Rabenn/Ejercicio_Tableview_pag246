@@ -33,34 +33,34 @@
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                      <children>
                         <Label alignment="CENTER" contentDisplay="CENTER" text="First Name:" />
-                        <TextField />
+                        <TextField fx:id="TextoFirstName" />
                      </children>
                   </HBox>
                   <HBox alignment="CENTER" prefHeight="40.0" prefWidth="309.0" GridPane.rowIndex="1">
                      <children>
                         <Label text="Last Name:" />
-                        <TextField />
+                        <TextField fx:id="TextoLastName" />
                      </children>
                   </HBox>
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="2">
                      <children>
-                        <Label text="Birth Date:" />
-                        <DatePicker />
+                        <Label alignment="CENTER" text="Birth Date:" />
+                        <DatePicker fx:id="Dates" />
                      </children>
                   </HBox>
                   <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1">
                      <children>
-                        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Button" />
+                        <Button fx:id="BotonAdd" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Add" />
                      </children>
                   </HBox>
                   <HBox prefHeight="40.0" prefWidth="239.0" GridPane.rowIndex="3">
                      <children>
-                        <Button mnemonicParsing="false" text="Restore Rows">
+                        <Button fx:id="botonRestore" mnemonicParsing="false" text="Restore Rows">
                            <HBox.margin>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </HBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" text="Delete Selected Rows">
+                        <Button fx:id="botonDelete" mnemonicParsing="false" text="Delete Selected Rows">
                            <HBox.margin>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </HBox.margin>

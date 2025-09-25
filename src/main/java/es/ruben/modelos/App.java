@@ -2,37 +2,38 @@ package es.ruben.modelos;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * JavaFX App
+ * Clase principal que carga la interfaz de usuario desde un archivo FXML.
+ * La estructura y los estilos están definidos en color.fxml y styles.css.
  */
+
 public class App extends Application {
-
-    private static Scene scene;
-
+    private static final Logger logger = LoggerFactory.getLogger(App.class);
     @Override
-    public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("primary"), 640, 480);
+    public void start(Stage stage) throws Exception {
+
+        logger.info("App lanzada");
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/table_app_info.fxml"));
+
+        Scene scene = new Scene(loader.load());
+        stage.setTitle("Ejercicio de tabla");
+
+        scene.getStylesheets().add(getClass().getResource("css/estilos.css").toExternalForm());
+
+        stage.setMinWidth(400);
+        stage.setMinHeight(600);
+
         stage.setScene(scene);
         stage.show();
-    }
-
-    static void setRoot(String fxml) throws IOException {
-        scene.setRoot(loadFXML(fxml));
-    }
-
-    private static Parent loadFXML(String fxml) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
-        return fxmlLoader.load();
     }
 
     public static void main(String[] args) {
         launch();
     }
-
 }
