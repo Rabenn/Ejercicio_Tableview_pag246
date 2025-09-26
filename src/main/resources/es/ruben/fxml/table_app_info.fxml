@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1"  fx:controller="es.ruben.controladores.Controlador_Tabla">
    <children>
       <HBox prefHeight="160.0" prefWidth="600.0">
          <children>
@@ -50,17 +50,17 @@
                   </HBox>
                   <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1">
                      <children>
-                        <Button fx:id="BotonAdd" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Add" />
+                        <Button fx:id="BotonAdd" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Add" onAction="#onaddClicked"/>
                      </children>
                   </HBox>
                   <HBox prefHeight="40.0" prefWidth="239.0" GridPane.rowIndex="3">
                      <children>
-                        <Button fx:id="botonRestore" mnemonicParsing="false" text="Restore Rows">
+                        <Button fx:id="botonRestore" mnemonicParsing="false" text="Restore Rows" onAction="#onRestoreClicked">
                            <HBox.margin>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </HBox.margin>
                         </Button>
-                        <Button fx:id="botonDelete" mnemonicParsing="false" text="Delete Selected Rows">
+                        <Button fx:id="botonDelete" mnemonicParsing="false" text="Delete Selected Rows" onAction="#onDeleteClicked">
                            <HBox.margin>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </HBox.margin>

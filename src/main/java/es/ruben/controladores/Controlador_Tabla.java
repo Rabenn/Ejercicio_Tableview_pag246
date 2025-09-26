@@ -25,4 +25,19 @@ public class Controlador_Tabla {
     @FXML
     private Button botonRestore;
 
+    @FXML
+    private void onaddClicked() {
+
+    }
+
+    @FXML
+    private void onDeleteClicked() {
+
+
+    }
+
+    @FXML
+    private void onRestoreClicked() {
+
+    }
 }
