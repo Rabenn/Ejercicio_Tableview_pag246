@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Clase principal que carga la interfaz de usuario desde un archivo FXML.
- * La estructura y los estilos están definidos en color.fxml y styles.css.
+ * La estructura y los estilos están definidos en table_app_info.fxml y estilos.css.
  */
 
 public class App extends Application {
