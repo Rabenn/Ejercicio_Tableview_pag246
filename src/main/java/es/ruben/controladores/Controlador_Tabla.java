@@ -34,9 +34,17 @@ public class Controlador_Tabla {
         colLastName.setCellValueFactory(cellData -> cellData.getValue().lastNameProperty());
         colBirthDate.setCellValueFactory(cellData -> cellData.getValue().birthDateProperty());
 
-        //Vinculacion de la lista
+        // Vinculación de la lista
         tablaPersonas.setItems(personas);
+
+        // Precargar con 3 personas
+        personas.addAll(
+                new Persona(1, "Mikel", "Boada", LocalDate.of(2005, 3, 17)),
+                new Persona(2, "Unai", "Zugaza", LocalDate.of(2006, 3, 20)),
+                new Persona(3, "Igor", "Esparza", LocalDate.of(2003, 10, 8))
+        );
     }
+
 
     @FXML
     private void onaddClicked() {
