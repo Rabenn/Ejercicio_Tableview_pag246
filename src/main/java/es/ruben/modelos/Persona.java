@@ -3,6 +3,10 @@ package es.ruben.modelos;
 import javafx.beans.property.*;
 import java.time.LocalDate;
 
+/**
+ * Representa una persona con identificador, nombre, apellido y fecha de nacimiento.
+ * Utiliza propiedades de JavaFX para permitir la vinculación con controles de la interfaz.
+ */
 public class Persona {
 
     private final IntegerProperty id = new SimpleIntegerProperty();
@@ -10,6 +14,13 @@ public class Persona {
     private final StringProperty lastName = new SimpleStringProperty();
     private final ObjectProperty<LocalDate> birthDate = new SimpleObjectProperty<>();
 
+    /**
+     * Crea una nueva persona con los datos proporcionados.
+     * @param id Identificador único de la persona
+     * @param firstName Nombre de la persona
+     * @param lastName Apellido de la persona
+     * @param birthDate Fecha de nacimiento
+     */
     public Persona(int id, String firstName, String lastName, LocalDate birthDate) {
         this.id.set(id);
         this.firstName.set(firstName);
@@ -17,7 +28,6 @@ public class Persona {
         this.birthDate.set(birthDate);
     }
 
-    // Getters y setters
     public int getId() { return id.get(); }
     public void setId(int id) { this.id.set(id); }
     public IntegerProperty idProperty() { return id; }
