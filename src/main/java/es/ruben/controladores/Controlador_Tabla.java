@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import java.time.LocalDate;
 import java.util.Stack;
+import javafx.scene.control.Tooltip;
 
 public class Controlador_Tabla {
 
