@@ -37,3 +37,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Propiedades ###
+src/main/resources/es/ruben/configuration.properties
