@@ -8,6 +8,7 @@ module es.ruben {
     // Abre los paquetes a FXML (para controladores)
     opens es.ruben to javafx.fxml;
     opens es.ruben.controladores to javafx.fxml;
+    opens es.ruben.modelos to javafx.base, javafx.fxml; // <--- imprescindible para PropertyValueFactory
 
     // Exporta los paquetes que quieras usar fuera del módulo
     exports es.ruben;

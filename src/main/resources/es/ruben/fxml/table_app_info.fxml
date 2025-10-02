@@ -7,7 +7,6 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -19,7 +18,7 @@
       fx:controller="es.ruben.controladores.Controlador_Tabla"
       prefHeight="600" prefWidth="400" spacing="10" styleClass="main-root">
 
-    <!-- GridPane -->
+    <!-- GridPane de entradas -->
     <GridPane hgap="10" vgap="10">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="50" prefWidth="100"/>
@@ -33,53 +32,43 @@
             <RowConstraints vgrow="SOMETIMES" minHeight="30"/>
         </rowConstraints>
 
-        <!--First Name y Botón Add -->
+        <!-- First Name y Botón Add -->
         <Label text="First Name:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
         <TextField fx:id="TextoFirstName" GridPane.rowIndex="0" GridPane.columnIndex="1"
                    HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-        <Button fx:id="BotonAdd" text="Add" GridPane.rowIndex="0" GridPane.columnIndex="2"
-                maxWidth="Infinity" onAction="#onaddClicked">
-            <tooltip>
-                <Tooltip text="Añadir una nueva fila con los datos introducidos"/>
-            </tooltip>
-        </Button>
+        <Button fx:id="BotonAdd" text="Add"
+                GridPane.rowIndex="0" GridPane.columnIndex="2"
+                maxWidth="Infinity" onAction="#onaddClicked"/>
 
-        <!--Last Name -->
+        <!-- Last Name -->
         <Label text="Last Name:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
         <TextField fx:id="TextoLastName" GridPane.rowIndex="1" GridPane.columnIndex="1" GridPane.columnSpan="2"
                    HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
 
-        <!--Birth Date -->
+        <!-- Birth Date -->
         <Label text="Birth Date:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
         <DatePicker fx:id="Dates" GridPane.rowIndex="2" GridPane.columnIndex="1" GridPane.columnSpan="2"
                     HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
 
-        <!--Botones Restore y Delete -->
+        <!-- Botones Restore y Delete -->
         <HBox spacing="10" GridPane.rowIndex="3" GridPane.columnIndex="0" GridPane.columnSpan="3">
             <padding>
                 <Insets top="5" right="5" bottom="5" left="5"/>
             </padding>
-            <Button fx:id="botonRestore" text="Restore Rows" HBox.hgrow="ALWAYS" maxWidth="Infinity" onAction="#onRestoreClicked">
-                <tooltip>
-                    <Tooltip text="Restaurar las filas eliminadas"/>
-                </tooltip>
-            </Button>
-            <Button fx:id="botonDelete" text="Delete Selected Rows" HBox.hgrow="ALWAYS" maxWidth="Infinity" onAction="#onDeleteClicked">
-                <tooltip>
-                    <Tooltip text="Eliminar la fila seleccionada de la tabla"/>
-                </tooltip>
-            </Button>
+            <Button fx:id="botonRestore" text="Restore Rows"
+                    HBox.hgrow="ALWAYS" maxWidth="Infinity" onAction="#onRestoreClicked"/>
+            <Button fx:id="botonDelete" text="Delete Selected Rows"
+                    HBox.hgrow="ALWAYS" maxWidth="Infinity" onAction="#onDeleteClicked"/>
         </HBox>
     </GridPane>
 
-    <!-- TableView-->
+    <!-- Tabla -->
     <TableView fx:id="tablaPersonas" prefHeight="436.0" prefWidth="302.0">
         <columns>
             <TableColumn fx:id="colId" prefWidth="75.0" text="Id" />
-            <TableColumn fx:id="colFirstName" prefWidth="75.0" text="First Name" />
-            <TableColumn fx:id="colLastName" prefWidth="75.0" text="Last Name" />
-            <TableColumn fx:id="colBirthDate" prefWidth="75.0" text="Birth Date" />
+            <TableColumn fx:id="colFirstName" prefWidth="100.0" text="First Name" />
+            <TableColumn fx:id="colLastName" prefWidth="100.0" text="Last Name" />
+            <TableColumn fx:id="colBirthDate" prefWidth="120.0" text="Birth Date" />
         </columns>
     </TableView>
-
 </VBox>
