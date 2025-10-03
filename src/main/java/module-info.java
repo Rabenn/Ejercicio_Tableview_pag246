@@ -4,6 +4,7 @@ module es.ruben {
     requires org.slf4j;
     requires java.sql;
     requires java.management;
+    requires javafx.graphics;
 
     // Abre los paquetes a FXML (para controladores)
     opens es.ruben to javafx.fxml;
