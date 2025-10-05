@@ -1,23 +1,68 @@
-# Ejercicio TableView
+# Proyecto: Ejemplo Personas - BBDD
 
-**Resumen:**  
-Proyecto JavaFX que permite gestionar una tabla de personas de manera interactiva. Se puede **añadir**, **borrar** y **restaurar** filas, mostrando información básica: Id, nombre, apellido y fecha de nacimiento. Utiliza JavaFX para la interfaz y SLF4J para logging.
+## Descripción
 
-## Descripción del proyecto
-El proyecto organiza la lógica y la interfaz de manera modular:
+Aplicación JavaFX para gestionar personas en una base de datos.  
 
-- `App.java`: Clase principal que lanza la aplicación y carga el FXML.  
-- `Lanzador.java`: Clase de arranque opcional para iniciar la aplicación.  
-- `Controlador_Tabla.java`: Controlador de la interfaz, maneja eventos de los botones y la interacción con la tabla.  
-- `Persona.java`: Modelo que representa cada fila de la tabla.  
-- Recursos FXML y CSS: Definen la estructura y el estilo de la interfaz gráfica.  
+Permite:
 
-## Usos
-**Mientras que la opccion principal es abrir IntelliJ IDEA u otro IDE y usar la funcion Package para crear un ejecutable y usarlo hay mas opcciones de ejecución:**
-1. Abrir el proyecto en **IntelliJ IDEA**.  
-2. Ejecutar la clase `Lanzador` o `App`.  
-3. Interactuar con la tabla usando los botones:  
+- Añadir, eliminar y restaurar registros de personas.
+- Visualizar los registros en una tabla interactiva.
+- Internacionalización con soporte para Español (`es`), Inglés (`en`) y Euskera (`eu`).
+- Conexión a base de datos configurable mediante un archivo `configuration.properties`.
 
-   - **Add**: Añade una fila con los datos ingresados.  
-   - **Delete**: Elimina la fila seleccionada.  
-   - **Restore**: Restaura la última fila eliminada.
+---
+
+## Tecnologías
+
+- Java 24
+- JavaFX 24
+- Maven (gestión de dependencias)
+- Base de datos relacional (MySQL, PostgreSQL, H2, etc.)
+- FXML y CSS para la interfaz
+- Internacionalización con `ResourceBundle`
+
+---
+
+## Estructura del proyecto
+
+src
+└── main
+├── java
+│ └── es.ruben
+│ ├── App.java # Clase principal de la aplicación
+│ ├── Lanzador.java # (Opcional) clase para lanzar App
+│ ├── controladores
+│ │ └── Controlador_Tabla.java
+│ ├── dao
+│ │ └── DaoPersona.java
+│ ├── modelos
+│ │ └── Persona.java
+│ └── util
+│ ├── Alertas.java
+│ └── Propiedades.java
+└── resources
+└── es.ruben
+├── fxml
+│ └── table_app_info.fxml
+├── css
+│ └── estilos.css
+├── imagenes
+│ └── icono_1.png
+├── configuration.properties
+├── texto_es.properties
+├── texto_en.properties
+└── texto_eu.properties
+
+
+---
+
+## Configuración de la base de datos
+
+Archivo: `configuration.properties`
+
+```properties
+db.url=jdbc:mysql://localhost:3306/mi_base
+db.user=usuario
+db.password=contraseña
+
