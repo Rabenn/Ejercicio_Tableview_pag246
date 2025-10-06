@@ -59,8 +59,11 @@ public class App extends Application {
 
         Locale local = Locale.getDefault();
         ResourceBundle bundle = ResourceBundle.getBundle("texto", local);
+        logger.info("Resource cargado")
         FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/table_app_info.fxml"));
+        logger.info("fxml cargado");
         Scene scene = new Scene(loader.load());
+        scene.getStyleSheet().getResource("css/estilos.css");
 
         stage.setTitle("Ejemplo Personas - BBDD");
         stage.setScene(scene);
