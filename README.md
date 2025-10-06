@@ -66,3 +66,6 @@ db.url=jdbc:mysql://localhost:3306/mi_base
 db.user=usuario
 db.password=contraseña
 
+##Funcionalidad
+
+Crear un archivo de configuraciones o usar el generico puesto en el ejercicio
