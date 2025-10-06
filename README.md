@@ -54,15 +54,16 @@ src
 ├── texto_en.properties
 └── texto_eu.properties
 
-
 ---
+## Creacion de la base
+Se requiere la tabla DNI con al menos las columnas id (PK, AUTO_INCREMENT), first_name, last_name, y birth_date.
 
 ## Configuración de la base de datos
 
 Archivo: `configuration.properties`
 
 ```properties
-db.url=jdbc:mysql://localhost:3306/mi_base
+db.url=jdbc:mysql://localhost:3306/DNI
 db.user=usuario
 db.password=contraseña
 

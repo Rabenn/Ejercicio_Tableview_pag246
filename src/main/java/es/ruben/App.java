@@ -5,6 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -50,8 +52,11 @@ public class App extends Application {
      * @param stage La ventana principal (Stage) donde se carga la escena.
      * @throws Exception Si ocurre un error al cargar el archivo FXML o los recursos.
      */
+    private static final Logger logger = LoggerFactory.getLogger(App.class);
+
     @Override
     public void start(Stage stage) throws Exception {
+
         Image icon = new Image(
                 App.class.getResource("imagenes/icono_1.png").toExternalForm()
         );
@@ -59,11 +64,11 @@ public class App extends Application {
 
         Locale local = Locale.getDefault();
         ResourceBundle bundle = ResourceBundle.getBundle("texto", local);
-        logger.info("Resource cargado")
+        logger.info("Resource cargado");
         FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/table_app_info.fxml"));
-        logger.info("fxml cargado");
+        logger.warn("fxml cargado");
         Scene scene = new Scene(loader.load());
-        scene.getStyleSheet().getResource("css/estilos.css");
+        scene.getStylesheets().add(getClass().getResource("css/estilos.css").toExternalForm());
 
         stage.setTitle("Ejemplo Personas - BBDD");
         stage.setScene(scene);
