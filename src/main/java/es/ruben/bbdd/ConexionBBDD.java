@@ -4,9 +4,10 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
 
 /**
- * Clase encargada de gestionar la conexión con la base de datos.
+ * Clase encargada de gestionar la conexión con la base de datos de forma asíncrona.
  *
  * <p>Esta clase implementa un patrón de tipo <b>singleton</b> para asegurar que solo
  * exista una conexión activa a la base de datos durante la ejecución de la aplicación.
@@ -24,55 +25,81 @@ import java.util.Properties;
  *
  * <p>Uso típico:
  * <pre>
- * Connection conexion = ConexionBBDD.getConexion();
+ * ConexionBBDD.getConexionAsync().thenAccept(con -> {
+ *     // usar la conexión aquí
+ * }).exceptionally(ex -> {
+ *     ex.printStackTrace();
+ *     return null;
+ * });
  * </pre>
  * </p>
  *
+ * <p>Esta versión usa {@link CompletableFuture} para realizar la conexión
+ * sin bloquear el hilo de JavaFX.</p>
+ *
  * @author Rubén
- * @version 1.0
+ * @version 2.0
  */
 public class ConexionBBDD {
 
     /** Conexión única compartida en toda la aplicación. */
-    private static Connection conexion;
+    private static volatile Connection conexion;
 
     /**
-     * Devuelve una instancia de {@link java.sql.Connection} a la base de datos.
+     * Devuelve un {@link CompletableFuture} que obtiene una conexión a la base de datos de forma asíncrona.
      *
      * <p>Si la conexión no ha sido creada previamente, el metodo carga la configuración
      * desde el archivo <code>configuration.properties</code> y establece una nueva
      * conexión utilizando {@link java.sql.DriverManager}.</p>
      *
-     * @return un objeto {@link Connection} activo hacia la base de datos, o {@code null}
-     *         si ocurre algún error durante el proceso de conexión.
+     * @return un CompletableFuture que completará con la conexión activa o lanzará una excepción en caso de error.
      *
      * @throws RuntimeException si el archivo de configuración no se encuentra o si
      *         ocurre un error al leerlo o conectar a la base de datos.
      */
-    public static Connection getConexion() {
-        if (conexion == null) {
-            try {
-                Properties props = new Properties();
-                InputStream input = ConexionBBDD.class.getClassLoader()
-                        .getResourceAsStream("configuration.properties");
+    public static CompletableFuture<Connection> getConexionAsync() {
+        return CompletableFuture.supplyAsync(() -> {
+            if (conexion == null) {
+                synchronized (ConexionBBDD.class) {
+                    if (conexion == null) {
+                        try (InputStream input = ConexionBBDD.class.getClassLoader()
+                                .getResourceAsStream("configuration.properties")) {
 
-                if (input == null) {
-                    throw new RuntimeException("No se encontró el archivo configuration.properties en los recursos.");
+                            if (input == null) {
+                                throw new RuntimeException("No se encontró el archivo configuration.properties en los recursos.");
+                            }
+
+                            Properties props = new Properties();
+                            props.load(input);
+
+                            String url = props.getProperty("db.url");
+                            String user = props.getProperty("db.user");
+                            String password = props.getProperty("db.password");
+
+                            conexion = DriverManager.getConnection(url, user, password);
+
+                        } catch (Exception e) {
+                            throw new RuntimeException("Error al establecer la conexión con la base de datos: " + e.getMessage(), e);
+                        }
+                    }
                 }
+            }
+            return conexion;
+        });
+    }
 
-                props.load(input);
-
-                String url = props.getProperty("db.url");
-                String user = props.getProperty("db.user");
-                String password = props.getProperty("db.password");
-
-                conexion = DriverManager.getConnection(url, user, password);
-
+    /**
+     * Cierra la conexión si está activa.
+     */
+    public static void cerrarConexion() {
+        if (conexion != null) {
+            try {
+                conexion.close();
+                conexion = null;
+                System.out.println("✅ Conexión cerrada correctamente.");
             } catch (Exception e) {
-                e.printStackTrace();
-                throw new RuntimeException("Error al establecer la conexión con la base de datos: " + e.getMessage());
+                System.err.println("⚠️ Error al cerrar la conexión: " + e.getMessage());
             }
         }
-        return conexion;
     }
 }

@@ -1,6 +1,7 @@
 package es.ruben.dao;
 
 import es.ruben.modelos.Persona;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -9,61 +10,28 @@ import java.io.InputStream;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
- * Clase DAO (Data Access Object) encargada de realizar las operaciones CRUD
- * sobre la tabla <b>persona</b> de la base de datos.
- *
- * <p>Esta clase encapsula la lógica de acceso a datos, gestionando las consultas,
- * inserciones y eliminaciones en la tabla. Utiliza JDBC para conectarse a la base
- * de datos, y las credenciales se cargan desde el archivo
- * <code>configuration.properties</code>.</p>
- *
- * <p>Ejemplo del archivo de configuración:
- * <pre>
- * db.url=jdbc:mysql://localhost:3306/mi_base
- * db.user=usuario
- * db.password=contraseña
- * </pre>
- * </p>
- *
- * <p>Uso típico:
- * <pre>
- * DaoPersona dao = new DaoPersona();
- * ObservableList&lt;Persona&gt; personas = dao.getTodasPersonas();
- * dao.insertarPersona(new Persona(0, "Juan", "Pérez", LocalDate.now()));
- * </pre>
- * </p>
- *
- * @author Rubén
- * @version 1.0
+ * DAO asíncrono para operaciones CRUD sobre la tabla persona.
+ * Usa CompletableFuture para ejecutar las consultas en un hilo separado,
+ * evitando bloqueos en la UI de JavaFX.
  */
 public class DaoPersona {
 
-    /** URL de conexión a la base de datos. */
     private String URL;
-
-    /** Usuario para la conexión. */
     private String USER;
-
-    /** Contraseña para la conexión. */
     private String PASS;
 
-    /**
-     * Constructor por defecto que carga la configuración de la base de datos
-     * desde el archivo <code>configuration.properties</code>.
-     */
+    // Pool de hilos para tareas en segundo plano
+    private static final ExecutorService executor = Executors.newFixedThreadPool(4);
+
     public DaoPersona() {
         loadConfig();
     }
 
-    /**
-     * Carga la configuración de conexión desde el archivo
-     * <code>configuration.properties</code> ubicado en el classpath.
-     *
-     * <p>Si el archivo no se encuentra o ocurre un error al leerlo, se mostrará
-     * un mensaje de error en la consola.</p>
-     */
     private void loadConfig() {
         Properties props = new Properties();
         try (InputStream input = getClass().getResourceAsStream("/configuration.properties")) {
@@ -80,139 +48,139 @@ public class DaoPersona {
         }
     }
 
-    /**
-     * Obtiene todas las personas almacenadas en la base de datos.
-     *
-     * @return una lista observable de objetos {@link Persona} con todos los registros encontrados.
-     */
-    public ObservableList<Persona> getTodasPersonas() {
-        ObservableList<Persona> lista = FXCollections.observableArrayList();
-        String sql = "SELECT id, first_name, last_name, birth_date FROM persona";
-
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASS);
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                String nombre = rs.getString("first_name");
-                String apellido = rs.getString("last_name");
-                Date fechaSQL = rs.getDate("birth_date");
-                LocalDate fecha = fechaSQL != null ? fechaSQL.toLocalDate() : null;
-
-                Persona persona = new Persona(id, nombre, apellido, fecha);
-                lista.add(persona);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return lista;
-    }
+    // ====================== MÉTODOS ASÍNCRONOS ======================
 
     /**
-     * Obtiene una persona concreta a partir de su identificador.
-     *
-     * @param id identificador de la persona.
-     * @return un objeto {@link Persona} con los datos encontrados, o {@code null} si no existe.
+     * Obtiene todas las personas de forma asíncrona.
+     * @return CompletableFuture con la lista de personas.
      */
-    public Persona obtenerPersona(int id) {
-        String sql = "SELECT id, first_name, last_name, birth_date FROM persona WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASS);
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+    public CompletableFuture<ObservableList<Persona>> getTodasPersonas() {
+        return CompletableFuture.supplyAsync(() -> {
+            ObservableList<Persona> lista = FXCollections.observableArrayList();
+            String sql = "SELECT id, first_name, last_name, birth_date FROM persona";
 
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
+            try (Connection conn = DriverManager.getConnection(URL, USER, PASS);
+                 Statement stmt = conn.createStatement();
+                 ResultSet rs = stmt.executeQuery(sql)) {
 
-            if (rs.next()) {
-                String nombre = rs.getString("first_name");
-                String apellido = rs.getString("last_name");
-                Date fechaSQL = rs.getDate("birth_date");
-                LocalDate fecha = fechaSQL != null ? fechaSQL.toLocalDate() : null;
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String nombre = rs.getString("first_name");
+                    String apellido = rs.getString("last_name");
+                    Date fechaSQL = rs.getDate("birth_date");
+                    LocalDate fecha = fechaSQL != null ? fechaSQL.toLocalDate() : null;
 
-                return new Persona(id, nombre, apellido, fecha);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    /**
-     * Inserta una nueva persona en la base de datos.
-     *
-     * <p>Tras la inserción, se actualiza el ID del objeto {@link Persona}
-     * con el valor generado automáticamente por la base de datos.</p>
-     *
-     * @param p objeto {@link Persona} que se desea insertar.
-     * @return {@code true} si la inserción fue exitosa, {@code false} en caso contrario.
-     */
-    public boolean insertarPersona(Persona p) {
-        String sql = "INSERT INTO persona(first_name, last_name, birth_date) VALUES (?, ?, ?)";
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASS);
-             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
-            ps.setString(1, p.getNombre());
-            ps.setString(2, p.getApellido());
-            ps.setDate(3, p.getFechaNacimiento() != null ? Date.valueOf(p.getFechaNacimiento()) : null);
-
-            int filas = ps.executeUpdate();
-            if (filas > 0) {
-                ResultSet keys = ps.getGeneratedKeys();
-                if (keys.next()) {
-                    p.setId(keys.getInt(1));
+                    lista.add(new Persona(id, nombre, apellido, fecha));
                 }
-                return true;
+
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return false;
+            return lista;
+        }, executor);
     }
 
     /**
-     * Elimina una persona de la base de datos según su ID.
-     *
-     * @param id identificador único de la persona a eliminar.
-     * @return {@code true} si la eliminación fue exitosa, {@code false} en caso contrario.
+     * Obtiene una persona por ID de forma asíncrona.
      */
-    public boolean borrarPersona(int id) {
-        String sql = "DELETE FROM persona WHERE id = ?";
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASS);
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+    public CompletableFuture<Persona> obtenerPersonaAsync(int id) {
+        return CompletableFuture.supplyAsync(() -> {
+            String sql = "SELECT id, first_name, last_name, birth_date FROM persona WHERE id = ?";
+            try (Connection conn = DriverManager.getConnection(URL, USER, PASS);
+                 PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setInt(1, id);
-            return ps.executeUpdate() > 0;
+                ps.setInt(1, id);
+                ResultSet rs = ps.executeQuery();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
+                if (rs.next()) {
+                    String nombre = rs.getString("first_name");
+                    String apellido = rs.getString("last_name");
+                    Date fechaSQL = rs.getDate("birth_date");
+                    LocalDate fecha = fechaSQL != null ? fechaSQL.toLocalDate() : null;
+                    return new Persona(id, nombre, apellido, fecha);
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }, executor);
     }
 
     /**
-     * Elimina todos los registros de la tabla <b>persona</b>.
-     *
-     * <p>Se debe usar con precaución, ya que esta operación no puede revertirse.</p>
-     *
-     * @return {@code true} si la operación fue exitosa, {@code false} si ocurrió un error.
+     * Inserta una persona de forma asíncrona.
      */
-    public boolean borrarTodasPersonas() {
-        String sql = "DELETE FROM persona";
-        try (Connection conn = DriverManager.getConnection(URL, USER, PASS);
-             Statement stmt = conn.createStatement()) {
+    public CompletableFuture<Boolean> insertarPersona(Persona p) {
+        return CompletableFuture.supplyAsync(() -> {
+            String sql = "INSERT INTO persona(first_name, last_name, birth_date) VALUES (?, ?, ?)";
+            try (Connection conn = DriverManager.getConnection(URL, USER, PASS);
+                 PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            stmt.executeUpdate(sql);
-            return true;
+                ps.setString(1, p.getNombre());
+                ps.setString(2, p.getApellido());
+                ps.setDate(3, p.getFechaNacimiento() != null ? Date.valueOf(p.getFechaNacimiento()) : null);
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+                int filas = ps.executeUpdate();
+                if (filas > 0) {
+                    ResultSet keys = ps.getGeneratedKeys();
+                    if (keys.next()) {
+                        p.setId(keys.getInt(1));
+                    }
+                    return true;
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             return false;
-        }
+        }, executor);
+    }
+
+    /**
+     * Borra una persona por ID de forma asíncrona.
+     */
+    public CompletableFuture<Boolean> borrarPersona(int id) {
+        return CompletableFuture.supplyAsync(() -> {
+            String sql = "DELETE FROM persona WHERE id = ?";
+            try (Connection conn = DriverManager.getConnection(URL, USER, PASS);
+                 PreparedStatement ps = conn.prepareStatement(sql)) {
+
+                ps.setInt(1, id);
+                return ps.executeUpdate() > 0;
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }, executor);
+    }
+
+    /**
+     * Borra todas las personas de forma asíncrona.
+     */
+    public CompletableFuture<Boolean> borrarTodasPersonas() {
+        return CompletableFuture.supplyAsync(() -> {
+            String sql = "DELETE FROM persona";
+            try (Connection conn = DriverManager.getConnection(URL, USER, PASS);
+                 Statement stmt = conn.createStatement()) {
+
+                stmt.executeUpdate(sql);
+                return true;
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }, executor);
+    }
+
+    // ====================== UTILIDAD PARA UI ======================
+
+    /**
+     * Metodo auxiliar para ejecutar una acción en el hilo de la interfaz.
+     */
+    public static void runOnUI(Runnable action) {
+        Platform.runLater(action);
     }
 }
